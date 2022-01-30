@@ -2,17 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class ViewVolumeBlender
+public class ViewVolumeBlender
 {
-    private static List<AViewVolume> ActiveViewVolumes = new List<AViewVolume>();
-    private static Dictionary<AView, List<AViewVolume>> VolumesPerViews = new Dictionary<AView, List<AViewVolume>>();
+    private static ViewVolumeBlender instance;
 
-    public static void Update()
-    {
+    private List<AViewVolume> ActiveViewVolumes = new List<AViewVolume>();
+    private Dictionary<AView, List<AViewVolume>> VolumesPerViews = new Dictionary<AView, List<AViewVolume>>();
+
+    public static ViewVolumeBlender Instance {
+        get { if (instance == null) instance = new ViewVolumeBlender(); return instance; }
+    }
+
+    public void Awake() {
+        ActiveViewVolumes = new List<AViewVolume>();
+        VolumesPerViews = new Dictionary<AView, List<AViewVolume>>();
+    }
+
+    public void Update() {
         WeightByPriority();
     }
 
-    public static void WeightByPriority()
+    public void WeightByPriority()
     {
         List<int> priorities = new List<int>();
         Dictionary<int, float> weightSumPerPriority = new Dictionary<int, float>();
@@ -20,6 +30,8 @@ public static class ViewVolumeBlender
 
         foreach (AViewVolume viewVolume in ActiveViewVolumes)
         {
+            if (viewVolume == null) { continue; }
+
             viewVolume.view.Weight = 0;
             if (!priorities.Contains(viewVolume.Priority))
             {
@@ -54,7 +66,7 @@ public static class ViewVolumeBlender
         }
     }
 
-    public static void PriorityFilter()
+    public void PriorityFilter()
     {
         float maxPrio = 0f;
 
@@ -80,7 +92,7 @@ public static class ViewVolumeBlender
         }
     }
 
-    public static void AddVolume(AViewVolume volumeToAdd)
+    public void AddVolume(AViewVolume volumeToAdd)
     {
         ActiveViewVolumes.Add(volumeToAdd);
         bool addView = true;
@@ -103,7 +115,7 @@ public static class ViewVolumeBlender
         }
     }
 
-    public static void RemoveVolume(AViewVolume volumeToRemove)
+    public void RemoveVolume(AViewVolume volumeToRemove)
     {
         ActiveViewVolumes.Remove(volumeToRemove);
         AView viewToDelet = null;

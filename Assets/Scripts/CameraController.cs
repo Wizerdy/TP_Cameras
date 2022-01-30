@@ -23,22 +23,31 @@ public class CameraController : MonoBehaviour {
             Destroy(gameObject);
             return;
         }
+
+        ViewVolumeBlender.Instance.Awake();
+
         currentConfiguration = new CameraConfiguration();
         targetConfiguration = new CameraConfiguration();
     }
 
     private void Update() {
-        ViewVolumeBlender.Update();
+        ViewVolumeBlender.Instance.Update();
 
         if (targetConfiguration == null || currentConfiguration == null) { return; }
 
-        ApplyConfiguration();
+        ComputeAverageView();
 
         if (isCutRequested) {
             isCutRequested = false;
             ApplyConfiguration(targetConfiguration);
         } else {
             SmoothTransition();
+        }
+    }
+
+    public void MoveActiveViews(Vector2 direction) {
+        for (int i = 0; i < activeViews.Count; i++) {
+            activeViews[i].Move(direction * activeViews[i].Weight);
         }
     }
 
@@ -53,13 +62,13 @@ public class CameraController : MonoBehaviour {
         ApplyConfiguration(camera, configuration);
     }
 
-    private void ApplyConfiguration() {
+    private void ComputeAverageView() {
         if (activeViews == null || activeViews.Count <= 0) { return; }
 
         CameraConfiguration[] configurations = activeViews.Select(v => v.GetConfiguration()).ToArray();
         float[] weight = activeViews.Select(v => v.Weight).ToArray();
         CameraConfiguration average = ComputeAverageConfiguration(configurations, weight);
-        targetConfiguration = average;
+        if (average != null) { targetConfiguration = average; }
     }
 
     public void SmoothTransition() {
@@ -80,25 +89,17 @@ public class CameraController : MonoBehaviour {
         float totWeight = 0f;
 
         Vector2 average = ComputeAverageAngleAsVector(configurations.Select(x => x.yaw).ToArray(), weight);
-        output.yaw = Vector2.SignedAngle(Vector3.right, average);
 
         for (int i = 0; i < configurations.Length; i++) {
             totWeight += weight[i];
-            output.pitch += configurations[i].pitch * weight[i];
-            output.roll += configurations[i].roll * weight[i];
-            output.distance += configurations[i].distance * weight[i];
-            output.pivot += configurations[i].pivot * weight[i];
-            output.fov += configurations[i].fov * weight[i];
+            output += configurations[i] * weight[i];
         }
 
         if (totWeight == 0) { return null; }
 
-        output.pitch /= totWeight;
-        output.roll /= totWeight;
-        output.distance /= totWeight;
-        output.pivot /= totWeight;
-        output.fov /= totWeight;
+        output /= totWeight;
 
+        output.yaw = Vector2.SignedAngle(Vector3.right, average);
         return output;
     }
 

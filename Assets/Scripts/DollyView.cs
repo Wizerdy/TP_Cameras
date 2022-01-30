@@ -25,7 +25,7 @@ public class DollyView : AView {
             .SetFov(fov);
     }
 
-    public void Move(float direction) {
-        distanceOnRail += speed * Time.deltaTime * direction;
+    public override void Move(Vector2 direction) {
+        distanceOnRail += speed * Time.deltaTime * direction.x;
     }
 }

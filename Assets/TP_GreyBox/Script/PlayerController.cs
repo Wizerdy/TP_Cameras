@@ -21,12 +21,13 @@ public class PlayerController : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (ffView != null) {
-            if (Cursor.lockState == CursorLockMode.Locked) {
-                Vector2 direction = Vector2.zero;
-                direction += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-                direction.Normalize();
-                ffView.Move(direction);
+        if (Cursor.lockState == CursorLockMode.Locked) {
+            Vector2 direction = Vector2.zero;
+            direction += new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
+            direction.Normalize();
+            //ffView.Move(direction);
+            CameraController.instance.MoveActiveViews(direction);
+            if (ffView != null) {
                 transform.rotation = Quaternion.Euler(0f, ffView.Yaw, 0f);
             }
         }

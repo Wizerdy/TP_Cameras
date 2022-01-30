@@ -5,12 +5,13 @@ using UnityEngine;
 public class TriggeredViewVolume : AViewVolume
 {
     public string target;
+    public bool onExit = false;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == target)
         {
-            SetActive(true);
+            SetActive(!onExit);
         }
     }
 
@@ -18,7 +19,7 @@ public class TriggeredViewVolume : AViewVolume
     {
         if (other.tag == target)
         {
-            SetActive(false);
+            SetActive(onExit);
         }
     }
 }

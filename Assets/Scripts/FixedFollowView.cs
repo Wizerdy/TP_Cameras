@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FixedFollowView : AView {
-    public float roll, fov = 60f;
+    [Range(CameraConfiguration.ROLL_MIN, CameraConfiguration.ROLL_MAX)] public float roll;
+    [Range(CameraConfiguration.FOV_MIN, CameraConfiguration.FOV_MAX)] public float fov = 60f;
+    public float distance;
     public Transform target;
     public Transform centralPoint = null;
     public float yawOffsetMax = 90f, pitchOffsetMax = 90f;
@@ -28,6 +30,7 @@ public class FixedFollowView : AView {
             .SetPitch(pitch)
             .SetRoll(roll)
             .SetPivot(transform.position)
+            .SetDistance(distance)
             .SetFov(fov);
     }
 }

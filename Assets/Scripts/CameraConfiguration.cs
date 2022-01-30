@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class CameraConfiguration {
-	public const float PITCH_MIN = -90f, PITCH_MAX = 90f, ROLL_MIN = -180f, ROLL_MAX = 180f, FOV_MIN = 15f, FOV_MAX = 180f;
+	public const float PITCH_MIN = -90f, PITCH_MAX = 90f, ROLL_MIN = -180f, ROLL_MAX = 180f, FOV_MIN = 0f, FOV_MAX = 180f;
 
 	public float yaw = 0f, pitch = 0f, roll = 0f;
 	public Vector3 pivot = Vector3.zero;
@@ -67,7 +67,16 @@ public class CameraConfiguration {
 			.SetPivot(c1.pivot * f)
 			.SetDistance(c1.distance * f)
 			.SetFov(c1.fov * f);
-    #endregion
+
+	public static CameraConfiguration operator /(CameraConfiguration c1, float f) =>
+		new CameraConfiguration()
+			.SetYaw(c1.yaw / f)
+			.SetPitch(c1.pitch / f)
+			.SetRoll(c1.roll / f)
+			.SetPivot(c1.pivot / f)
+			.SetDistance(c1.distance / f)
+			.SetFov(c1.fov / f);
+	#endregion
 
 	public static float AverageYaw(float yaw1, float yaw2, float t) {
 		return Vector2.SignedAngle(Vector2.right, yaw1.Vectorize() * (1 - t) + yaw2.Vectorize() * t);

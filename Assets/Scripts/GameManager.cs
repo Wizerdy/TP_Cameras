@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
 
         Vector2 direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         if (dollyView != null) {
-            dollyView.Move(direction.x);
+            dollyView.Move(direction);
         }
 
         if (ffView != null) {

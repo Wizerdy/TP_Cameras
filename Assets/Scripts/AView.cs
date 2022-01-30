@@ -15,9 +15,10 @@ public abstract class AView : MonoBehaviour {
 		gameObject.SetActive(isActive);
 		if (isActive) {
 			CameraController.instance.AddView(this);
-			//CameraController.instance.ApplyConfiguration(GetConfiguration());
 		} else {
 			CameraController.instance.RemoveView(this);
 		}
 	}
+
+	public virtual void Move(Vector2 direction) { }
 }
